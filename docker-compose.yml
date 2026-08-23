@@ -29,6 +29,13 @@ services:
     volumes:
       - wanderpath_db_data:/app/db
       - wanderpath_chroma_data:/app/rag/chroma_db
+      - ./wanderpath_platform:/app/wanderpath_platform
+      - ./mcp_server:/app/mcp_server
+      - ./planning:/app/planning
+      - ./rag:/app/rag
+      - ./state_graph:/app/state_graph
+      - ./agent:/app/agent
+      - ./memory:/app/memory
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8500/healthz"]
@@ -56,6 +63,11 @@ services:
     environment:
       - PORT_MCP=8000
       - WANDERPATH_ENV=production
+    volumes:
+      - ./mcp_server:/app/mcp_server
+      - ./planning:/app/planning
+      - ./rag:/app/rag
+      - ./state_graph:/app/state_graph
     restart: unless-stopped
     networks:
       - wanderpath-net

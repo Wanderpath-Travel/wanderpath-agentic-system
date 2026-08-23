@@ -48,7 +48,8 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONPATH=/app
 
-# Copy application source code
+# Copy application source code (with cache busting)
+ARG CACHEBUST=1
 COPY . .
 
 # Sanitize line endings, ensure entrypoint is executable, and create persistence dirs
