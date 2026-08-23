@@ -108,11 +108,15 @@ docker cp wanderpath-platform:/app/db/wanderpath.sqlite3 ./backup_wanderpath.sql
 
 ## 🔑 5. Live Real-World LLM Configuration
 
-The platform supports live LLM execution via Google Gemini, OpenAI, or Anthropic Claude.
+The platform supports live LLM execution via Mistral AI, Google Gemini, OpenAI, or Anthropic Claude.
 
 Configure your API keys in `.env`:
 ```ini
-# Google Gemini (Recommended)
+# Mistral AI (Recommended)
+MISTRAL_API_KEY=your_mistral_api_key_here
+MISTRAL_MODEL=mistral-large-latest
+
+# Google Gemini
 GEMINI_API_KEY=AIzaSy...
 
 # OpenAI

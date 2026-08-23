@@ -19,13 +19,35 @@ class MockResponse:
 
 
 class LiveLLMDispatcher:
-    """Helper to dispatch requests to live LLM providers if keys are configured."""
+    """Helper to dispatch requests to live LLM providers (Mistral, Gemini, OpenAI, Anthropic)."""
     @staticmethod
     def try_call_live_llm(prompt: str, temperature: float = 0.2) -> str:
+        mistral_key = os.getenv("MISTRAL_API_KEY")
         gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         openai_key = os.getenv("OPENAI_API_KEY")
         anthropic_key = os.getenv("ANTHROPIC_API_KEY")
 
+        # 1. Mistral AI (Primary)
+        if mistral_key:
+            try:
+                url = "https://api.mistral.ai/v1/chat/completions"
+                headers = {"Authorization": f"Bearer {mistral_key}", "Content-Type": "application/json"}
+                model_name = os.getenv("MISTRAL_MODEL", "mistral-large-latest")
+                payload = {
+                    "model": model_name,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": temperature
+                }
+                resp = requests.post(url, json=payload, headers=headers, timeout=10.0)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    return data["choices"][0]["message"]["content"]
+                else:
+                    logger.warning(f"[ModelProvider] Mistral API error {resp.status_code}: {resp.text}")
+            except Exception as e:
+                logger.warning(f"[ModelProvider] Live Mistral call failed ({e}), falling back to deterministic engine.")
+
+        # 2. Google Gemini
         if gemini_key:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
@@ -40,6 +62,7 @@ class LiveLLMDispatcher:
             except Exception as e:
                 logger.warning(f"[ModelProvider] Live Gemini call failed ({e}), falling back to deterministic engine.")
 
+        # 3. OpenAI
         if openai_key:
             try:
                 url = "https://api.openai.com/v1/chat/completions"
@@ -56,6 +79,7 @@ class LiveLLMDispatcher:
             except Exception as e:
                 logger.warning(f"[ModelProvider] Live OpenAI call failed ({e}), falling back to deterministic engine.")
 
+        # 4. Anthropic Claude
         if anthropic_key:
             try:
                 url = "https://api.anthropic.com/v1/messages"
@@ -87,6 +111,21 @@ class StructuredOutputBound:
         
         prompt_text = " ".join([str(msg[1]) for msg in messages if isinstance(msg, (list, tuple)) and len(msg) > 1])
         self.provider.token_count += len(prompt_text) // 4
+
+        # Try Live Mistral structured output if key exists
+        mistral_key = os.getenv("MISTRAL_API_KEY")
+        if mistral_key:
+            try:
+                from langchain_mistralai import ChatMistralAI
+                model_name = os.getenv("MISTRAL_MODEL", "mistral-large-latest")
+                chat = ChatMistralAI(api_key=mistral_key, model=model_name, temperature=0.1)
+                bound = chat.with_structured_output(self.schema)
+                res = bound.invoke(messages, **kwargs)
+                if res is not None:
+                    self.provider.token_count += 80
+                    return res
+            except Exception as e:
+                logger.warning(f"[ModelProvider] Mistral structured output call failed ({e}), using fallback candidate.")
 
         schema_name = getattr(self.schema, "__name__", str(self.schema))
         

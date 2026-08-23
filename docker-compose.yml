@@ -20,7 +20,9 @@ services:
       - DB_PATH=/app/db/wanderpath.sqlite3
       - CHROMA_PERSIST_DIR=/app/rag/chroma_db
       - WANDERPATH_ENV=production
-      # Optional: Pass your live API keys from .env
+      # Optional: Live LLM Provider API Keys
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
+      - MISTRAL_MODEL=${MISTRAL_MODEL:-mistral-large-latest}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
