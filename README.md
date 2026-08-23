@@ -1,12 +1,13 @@
 # Wanderpath Travel Agency — Autonomous Agentic Platform ✈️
 
 [![System Status](https://img.shields.io/badge/System-OPERATIONAL-emerald?style=for-the-badge&logo=shield)](http://localhost:8500)
+[![Docker Container](https://img.shields.io/badge/Docker-Ready%20%28Compose%20v2%29-2496ED?style=for-the-badge&logo=docker)](file:///DOCKER.md)
 [![Python Version](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue?style=for-the-badge&logo=python)](https://python.org)
 [![Protocol](https://img.shields.io/badge/Protocol-MCP%20v1.0%20Streamable%20HTTP-indigo?style=for-the-badge)](https://modelcontextprotocol.io)
 [![State Engine](https://img.shields.io/badge/State%20Graph-Durable%20SQLite%20Checkpointer-purple?style=for-the-badge)](file:///state_graph)
 [![Platform](https://img.shields.io/badge/Platform-Full--Stack%20FastAPI%20%2B%20Tailwind-cyan?style=for-the-badge)](file:///wanderpath_platform)
 
-This repository contains the complete production implementation of the **Wanderpath Travel B. Autonomous Agentic Platform** — encompassing Model Context Protocol (MCP) server integration, Long-Term Memory & Multi-Tier RAG architectures, DAG Dynamic Decomposition & Planning algorithms, Cyclic Stateful Problem Graphs, SQLite Durable Checkpointing, Platform-Routed Human-in-the-Loop (HITL) Escalation, Unplanned Failure Ticket Recovery, and a Full-Stack Web Platform.
+This repository contains the complete production implementation of the **Wanderpath Travel B. Autonomous Agentic Platform** — encompassing Model Context Protocol (MCP) server integration, Long-Term Memory & Multi-Tier RAG architectures, DAG Dynamic Decomposition & Planning algorithms, Cyclic Stateful Problem Graphs, SQLite Durable Checkpointing, Platform-Routed Human-in-the-Loop (HITL) Escalation, Unplanned Failure Ticket Recovery, a Full-Stack Web Platform, and Reproducible Multi-Service Docker Containerization.
 
 ---
 
@@ -18,9 +19,10 @@ This repository contains the complete production implementation of the **Wanderp
 4. [Durable Checkpointing & Crash-Recovery Guarantees](#4-durable-checkpointing--crash-recovery-guarantees)
 5. [HITL Escalation vs. Failure Ticket Recovery](#5-hitl-escalation-vs-failure-ticket-recovery)
 6. [Full-Stack Web Platform: User Concierge & Admin Command Center](#6-full-stack-web-platform-user-concierge--admin-command-center)
-7. [Directory Structure & File Manifest](#7-directory-structure--file-manifest)
-8. [Setup, Verification & Execution Guide](#8-setup-verification--execution-guide)
-9. [Rubric Compliance & Architectural Invariants](#9-rubric-compliance--architectural-invariants)
+7. [Docker Containerization & Production Deployment](#7-docker-containerization--production-deployment)
+8. [Directory Structure & File Manifest](#8-directory-structure--file-manifest)
+9. [Setup, Verification & Execution Guide](#9-setup-verification--execution-guide)
+10. [Rubric Compliance & Architectural Invariants](#10-rubric-compliance--architectural-invariants)
 
 ---
 
@@ -155,6 +157,54 @@ project-3/
 │   └── README.md                      # MCP protocol specification
 ├── rag/                               # Unstructured Knowledge & Multi-Tier RAG
 │   ├── vector_store.py                # ChromaDB vector store with dynamic CRUD
+---
+
+## 7. Docker Containerization & Production Deployment
+
+The entire system is packaged as a reproducible, multi-service Docker architecture with zero-config startup and persistent volume mappings:
+
+### One-Command Deployment
+```bash
+# 1. Clone & prepare environment
+cp .env.example .env
+
+# 2. Build and launch all services in background
+docker compose up --build -d
+```
+
+### Access URLs:
+* **Concierge Web App & Admin Surface**: [`http://localhost:8500`](http://localhost:8500)
+* **Model Context Protocol (MCP) Server**: [`http://localhost:8000/sse`](http://localhost:8000/sse)
+* **Container Health Check Endpoint**: [`http://localhost:8500/healthz`](http://localhost:8500/healthz)
+
+### Single Standalone Container Execution:
+```bash
+docker run -d -p 8500:8500 -p 8000:8000 \
+  -v wanderpath_db:/app/db \
+  -v wanderpath_chroma:/app/rag/chroma_db \
+  wanderpath-autonomous-platform:latest
+```
+
+*For complete volume backup instructions, production webhooks, and live LLM keys setup, refer to [`DOCKER.md`](file:///DOCKER.md).*
+
+---
+
+## 8. Directory Structure & File Manifest
+
+```
+project-3/
+├── Dockerfile                         # Production multi-stage Python 3.11 Dockerfile
+├── docker-compose.yml                 # Multi-service container orchestration
+├── docker-entrypoint.sh               # Unified entrypoint script (all, platform, mcp, test)
+├── requirements.txt                   # Consolidated Python dependencies
+├── .env.example                       # Environment variables and API keys template
+├── DOCKER.md                          # Comprehensive Docker deployment guide
+├── mcp_server/                        # Defensive Streamable MCP Server
+│   ├── server.py                      # FastMCP SSE server (:8000)
+│   ├── tools/                         # Flight, hotel, and medical dispatch tools
+│   └── README.md                      # MCP server documentation
+├── rag/                               # Hybrid RAG & Vector Policy Store
+│   ├── vector_store.py                # ChromaDB vector store wrapper
 │   ├── hybrid_search.py               # Hybrid Vector + BM25 search
 │   ├── self_rag_verifier.py           # Groundedness & relevance verification
 │   └── README.md                      # RAG documentation
@@ -166,6 +216,7 @@ project-3/
 │   ├── agent/rebooking_planning_agent.py # Disruption planning entry point
 │   ├── routing/route_subtask.py       # Algorithmic decision matrix router
 │   ├── algorithms_glue/               # Plan-and-Solve, Tree of Thoughts, LATS wrappers
+│   ├── adapters/model_provider.py     # Live LLM provider dispatcher with fallbacks
 │   └── README.md                      # Planning documentation
 ├── state_graph/                       # Cyclic State Graph Engine & Stateful Graphs
 │   ├── checkpointer.py                # SQLite-backed DurableCheckpointer
@@ -175,12 +226,13 @@ project-3/
 │   ├── tests/                         # Recovery and graph test suites
 │   └── README.md                      # State graph architecture
 ├── wanderpath_platform/               # Full-Stack Web Platform
-│   ├── backend/app.py                 # Starlette REST API server
+│   ├── backend/app.py                 # Starlette REST API server (:8500)
 │   ├── frontend/index.html            # Luxury Tailwind CSS web portal
 │   ├── tests/test_platform_e2e.py     # End-to-end integration tests
 │   └── README.md                      # Platform user guide
 ├── tests/                             # Master Test Suite
-│   └── master_smoke_test.py           # End-to-end master smoke test across all 6 concerns
+│   ├── master_smoke_test.py           # End-to-end master smoke test across all 6 concerns
+│   └── test_docker_deployment.py      # Docker configuration & webhook integration tests
 ├── docs/                              # Project Documentation & Transcripts
 │   └── transcripts/                   # Live demo evidence transcripts (Scenarios 1-5)
 └── README.md                          # Master Root Documentation
@@ -188,11 +240,11 @@ project-3/
 
 ---
 
-## 8. Setup, Verification & Execution Guide
+## 9. Setup, Verification & Execution Guide
 
 ### Prerequisites
 * Python 3.11+
-* Active Virtual Environment (`mcp_server/.venv`)
+* Active Virtual Environment (`mcp_server/.venv`) or Docker Engine 20.10+
 
 ### 1. Run the Master Smoke Test Suite
 Executes all 6 architectural concerns in a single unified test runner:
@@ -200,7 +252,12 @@ Executes all 6 architectural concerns in a single unified test runner:
 mcp_server\.venv\Scripts\python.exe tests\master_smoke_test.py
 ```
 
-### 2. Run Individual Verification Test Suites
+### 2. Run Docker Deployment & Webhook Test Suite
+```powershell
+mcp_server\.venv\Scripts\python.exe tests\test_docker_deployment.py
+```
+
+### 3. Run Individual Verification Test Suites
 ```powershell
 # Sub-Module 1: Dynamic MCP & RAG CRUD
 mcp_server\.venv\Scripts\python.exe agent\test_dynamic_mcp_rag.py
@@ -218,7 +275,7 @@ mcp_server\.venv\Scripts\python.exe state_graph\tests\test_hitl_and_tickets.py
 mcp_server\.venv\Scripts\python.exe wanderpath_platform\tests\test_platform_e2e.py
 ```
 
-### 3. Launch the Live Platform Web App
+### 4. Launch the Live Platform Web App Locally
 ```powershell
 mcp_server\.venv\Scripts\python.exe -m uvicorn wanderpath_platform.backend.app:app --host 0.0.0.0 --port 8500
 ```
@@ -226,7 +283,7 @@ Open **`http://localhost:8500`** in your browser.
 
 ---
 
-## 9. Rubric Compliance & Architectural Invariants
+## 10. Rubric Compliance & Architectural Invariants
 
 | Course & Final Project Requirement | Implementation Location | Verification Evidence | Status |
 |---|---|---|---|
@@ -239,4 +296,5 @@ Open **`http://localhost:8500`** in your browser.
 | **Live MCP Tool Mutation** | `mcp_server/server.py` | `agent/test_dynamic_mcp_rag.py` & Platform UI | **100% PASSED** |
 | **Live RAG Vector Store CRUD** | `rag/vector_store.py` | `agent/test_dynamic_mcp_rag.py` & Platform UI | **100% PASSED** |
 | **Full-Stack Web Interface** | `wanderpath_platform/frontend/index.html` | Tested live on `http://localhost:8500` | **100% PASSED** |
+| **Reproducible Docker Deployment** | `Dockerfile`, `docker-compose.yml` | `tests/test_docker_deployment.py` & `DOCKER.md` | **100% PASSED** |
 | **Comprehensive Evidence Transcripts** | `docs/transcripts/` | 5 complete timestamped markdown transcripts | **100% PASSED** |
