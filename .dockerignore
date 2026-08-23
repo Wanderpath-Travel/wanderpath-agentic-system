@@ -1,0 +1,30 @@
+# Git
+.git
+.gitignore
+
+# Virtual Environments
+.venv
+venv
+ENV
+env
+mcp_server/.venv
+planning/vendor/toolkit/.venv
+
+# Python Bytecode & Cache
+__pycache__
+*.py[cod]
+*$py.class
+*.pytest_cache
+.coverage
+htmlcov
+
+# Environment & Credentials
+.env
+.env.local
+*.sqlite3-journal
+
+# Documentation & IDE
+.vscode
+.idea
+.gemini
+ISSUES.md
