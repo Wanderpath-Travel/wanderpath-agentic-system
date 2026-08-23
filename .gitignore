@@ -87,4 +87,5 @@ logs/
 *.tmp
 *.bak.env
 
-ISSUES.md
+ISSUES.md.~lock.*#
+~$*
