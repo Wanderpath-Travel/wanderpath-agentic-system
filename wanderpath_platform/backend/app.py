@@ -126,53 +126,50 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
     if is_greeting(user_msg):
         intros = {
             "visa_agent": (
-                "👋 **Hello! I am the Wanderpath Visa & Consular Desk Agent.**\n\n"
-                "I manage complex, multi-stage international visa applications using Task Decomposition, "
-                "live diplomatic policy retrieval (RAG), external embassy webhooks, and managerial fee approvals.\n\n"
-                "💡 *Quick Start:* Type your destination (e.g., *'Emergency Schengen visa for France'*) or click a scenario above!"
+                "👋 **Welcome to the Wanderpath Diplomatic Visa & Consular Desk.**\n\n"
+                "I assist travelers with expedited international visas, entry clearances, and consular document submissions.\n\n"
+                "💡 *How to begin:* Let me know your destination country and travel timeline (e.g., *'Emergency Schengen visa for France'*), or choose a featured scenario above!"
             ),
             "dispute_agent": (
-                "👋 **Hello! I am the Supplier Contract Dispute & Chargeback Specialist.**\n\n"
-                "I evaluate airline cancellations, force majeure clauses, and EU261 statutory compensation claims "
-                "using Tree of Thoughts (ToT) legal analysis and automated GDS clearinghouse filings.\n\n"
-                "💡 *Quick Start:* Enter your flight issue (e.g., *'PacificFly cancelled flight WP-202 due to crew strike'*) or click a scenario above!"
+                "👋 **Welcome to the Wanderpath Passenger Rights & Airline Dispute Desk.**\n\n"
+                "I assist clients in resolving airline disruptions, flight cancellations, unfair penalties, and statutory compensation claims.\n\n"
+                "💡 *How to begin:* Provide your flight or booking details (e.g., *'PacificFly cancelled flight WP-202 due to crew strike'*), or choose a featured scenario above!"
             ),
             "medevac_agent": (
-                "👋 **Hello! I am the VIP Aeromedical Evacuation & Repatriation Coordinator.**\n\n"
-                "I execute critical medical evacuations, utilizing LATS airfield scoring to match patient acuity against "
-                "aircraft range, runway lengths, and receiving ICU bed capacity, with physician sign-off gates.\n\n"
-                "💡 *Quick Start:* Enter the patient alert (e.g., *'Spinal trauma in Bali needing air charter to Singapore'*) or click a scenario above!"
+                "👋 **Welcome to the Wanderpath Global Emergency Medevac & Air Charter Desk.**\n\n"
+                "I coordinate urgent international patient transfers, private air ambulance charters, and hospital admissions with direct medical director oversight.\n\n"
+                "💡 *How to begin:* Share the patient's current location and destination hospital (e.g., *'Medical transfer from Bali to Singapore General Hospital'*), or choose a featured scenario above!"
             ),
             "planning_agent": (
-                "👋 **Hello! I am the Trip Disruption Planning Agent.**\n\n"
-                "I generate multi-stage dynamic DAGs to solve complex flight cancellations, hotel rebookings, and itinerary disruptions.\n\n"
-                "💡 *Quick Start:* Describe your broken itinerary to generate a rebooking plan!"
+                "👋 **Welcome to the Wanderpath Luxury Travel Planning & Disruption Desk.**\n\n"
+                "I design seamless multi-leg itineraries and quickly resolve unexpected flight delays, hotel rebookings, and journey alterations.\n\n"
+                "💡 *How to begin:* Describe your itinerary or travel disruption, and I will craft an optimal replacement plan!"
             ),
             "memory_rag_agent": (
-                "👋 **Hello! I am the Memory & Hybrid RAG Knowledge Agent.**\n\n"
-                "I maintain long-term traveler profiles and search our internal knowledge base for luxury resort and airline policies.\n\n"
-                "💡 *Quick Start:* Ask any policy question, e.g. *'What is the cancellation policy for Alpine Resort & Spa?'*"
+                "👋 **Welcome to the Wanderpath Concierge Knowledge Desk.**\n\n"
+                "I have immediate access to our verified luxury resort terms, airline tariff policies, and international passport regulations.\n\n"
+                "💡 *How to begin:* Ask any travel policy or accommodation question (e.g., *'What is the cancellation policy for Alpine Resort & Spa?'*)!"
             )
         }
         return JSONResponse({
             "agent_id": agent_id,
             "thread_id": thread_id,
             "status": "READY",
-            "response": intros.get(agent_id, "Hello! How can I assist you with Wanderpath travel services today?"),
+            "response": intros.get(agent_id, "Welcome to Wanderpath Travel Concierge. How may I assist with your journey today?"),
             "state": {"__status__": "READY"}
         })
 
     # 2. Handle General Q&A / Agency Assistance Inquiries
     if is_general_qa(user_msg):
         qa_resp = (
-            "✨ **Wanderpath Autonomous Concierge Capabilities**:\n\n"
-            "I am powered by an enterprise agentic architecture featuring 5 specialized operational desks:\n\n"
-            "1. 🛂 **Visa & Consular Desk**: Stateful task decomposition & live consular RAG lookup with embassy webhooks.\n"
-            "2. ⚖️ **Supplier Dispute Desk**: Tree of Thoughts (ToT) arbitration & GDS chargeback filings.\n"
-            "3. 🚁 **VIP Medevac Desk**: Language Agent Tree Search (LATS) airfield routing with physician authorization.\n"
-            "4. 🗺️ **Disruption Planner**: DAG dynamic replanning for cancelled flights and multi-leg connections.\n"
-            "5. 🧠 **Memory & RAG Agent**: Long-term traveler profile memory and vector search across luxury policy guides.\n\n"
-            "Every state transition is backed by durable SQLite checkpoints guaranteeing zero data loss."
+            "✨ **Welcome to Wanderpath Autonomous Travel Concierge**:\n\n"
+            "I provide bespoke, end-to-end travel management and emergency operational support through 5 specialized concierge desks:\n\n"
+            "1. 🛂 **Diplomatic Visa & Consular Desk**: Expedited international visas, passport validity checks, and fast-track embassy submissions.\n"
+            "2. ⚖️ **Airline & Supplier Dispute Desk**: Statutory compensation claims (EU261), flight cancellation refunds, and carrier fee waivers.\n"
+            "3. 🚁 **VIP Aeromedical Evacuation Desk**: Emergency air ambulance charters, patient hospital admissions, and medevac clearances.\n"
+            "4. 🗺️ **Trip Disruption Replanner**: Seamless multi-modal rebooking across partner airlines, high-speed rail, and luxury hotel accommodations.\n"
+            "5. 🧠 **Concierge Knowledge Desk**: Instant answers on resort cancellation deadlines, baggage policies, and traveler preferences.\n\n"
+            "How may I assist with your travel arrangements today?"
         )
         return JSONResponse({
             "agent_id": agent_id,
@@ -202,9 +199,9 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
                     "status": "INTERRUPTED",
                     "current_node": cnode,
                     "response": (
-                        "⏳ **Current Status: Awaiting Embassy Webhook**\n\n"
-                        "Your digital visa dossier has been submitted. The application is paused waiting for the consulate to deliver its appointment webhook.\n\n"
-                        "👉 *Next Action:* Click **'Simulate Webhook / Event Arrival & Resume'** in the chat to simulate the embassy's response."
+                        "⏳ **Current Status: Application Under Review at Consulate**\n\n"
+                        "Your digital visa dossier has been submitted. We are awaiting the official appointment and biometrics confirmation from the embassy.\n\n"
+                        "👉 *Next Action:* You will receive an instant notification once the embassy confirms your appointment slot."
                     ),
                     "state": latest_chk.state_data
                 })
@@ -215,9 +212,9 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
                     "status": "INTERRUPTED",
                     "current_node": cnode,
                     "response": (
-                        "🚨 **Current Status: Managerial Approval Required (HITL)**\n\n"
-                        "The consulate confirmed an emergency slot with a fee of **$650.00**, which exceeds the standard $500 threshold.\n\n"
-                        "👉 *Next Action:* Go to **Command Center -> HITL Tasks** and click **Approve & Resume Graph** to issue the visa."
+                        "🚨 **Current Status: Expedited Fee Approval in Progress**\n\n"
+                        "The consulate confirmed an emergency slot with a fast-track fee of **$650.00**.\n\n"
+                        "👉 *Next Action:* Our operations team is authorizing the fee to finalize your visa issuance immediately."
                     ),
                     "state": latest_chk.state_data
                 })
@@ -228,9 +225,9 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
                     "status": "INTERRUPTED",
                     "current_node": cnode,
                     "response": (
-                        "⏳ **Current Status: Awaiting Carrier Settlement**\n\n"
-                        "Your EU261 dispute claim is filed with the airline clearinghouse (7-day response window).\n\n"
-                        "👉 *Next Action:* Click **'Simulate Webhook / Event Arrival & Resume'** to receive the settlement offer."
+                        "⏳ **Current Status: Claim Submitted to Airline**\n\n"
+                        "Your compensation claim has been submitted to the airline clearinghouse for review.\n\n"
+                        "👉 *Next Action:* The airline has a standard window to respond. We will notify you the moment settlement is confirmed."
                     ),
                     "state": latest_chk.state_data
                 })
@@ -241,9 +238,9 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
                     "status": "INTERRUPTED",
                     "current_node": cnode,
                     "response": (
-                        "🚨 **Current Status: Fee Waiver Approval Required (HITL)**\n\n"
-                        "The airline proposed a $200 refund with a $350 booking fee waiver (exceeds $300 limit).\n\n"
-                        "👉 *Next Action:* Authorize the settlement under **Command Center -> HITL Tasks**."
+                        "🚨 **Current Status: Settlement Terms Under Review**\n\n"
+                        "The airline proposed a $200 refund with a $350 fee waiver.\n\n"
+                        "👉 *Next Action:* Our management team is reviewing the terms to ensure maximum compensation."
                     ),
                     "state": latest_chk.state_data
                 })
@@ -253,7 +250,7 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
                     "thread_id": thread_id,
                     "status": "COMPLETED",
                     "current_node": cnode,
-                    "response": "✅ **Workflow Completed**: Your travel request has been fully processed and finalized in our database.",
+                    "response": "✅ **Request Completed**: Your travel operation has been successfully processed and confirmed.",
                     "state": latest_chk.state_data
                 })
 
@@ -271,30 +268,30 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
 
         if current_node == "awaiting_consular_webhook" and status == "INTERRUPTED":
             resp_text = (
-                f"🛂 **Consular Visa Dossier Submitted**\n\n"
+                f"🛂 **Visa Application Submitted to Embassy**\n\n"
                 f"• **Destination**: {res.get('destination', 'France')} ({res.get('visa_type', 'schengen').title()} Visa)\n"
-                f"• **Decomposed Milestones**: 6 milestones identified; passport verified & consular rules retrieved.\n"
-                f"• **Expedited Fee Estimated**: ${res.get('retrieved_fee', 650.0):.2f}\n"
-                f"• **Status**: ⏳ Application submitted to consular portal. **Awaiting asynchronous embassy webhook.**\n\n"
-                f"*(You can trigger the webhook arrival using the button below or simulate in the Command Center.)*"
+                f"• **Application Summary**: Complete digital dossier submitted to consular authority; entry validity verified.\n"
+                f"• **Consular Processing Fee**: ${res.get('retrieved_fee', 650.0):.2f}\n"
+                f"• **Current Status**: ⏳ Application received by embassy. **Awaiting official appointment & biometrics confirmation.**\n\n"
+                f"*(You will receive an instant notification once the embassy confirms your appointment slot.)*"
             )
         elif current_node == "evaluate_consular_response" and status == "INTERRUPTED":
             resp_text = (
-                f"🚨 **Consular Fee Authorization Required (HITL Gate)**\n\n"
-                f"• **Consular Response**: Emergency slot allocated.\n"
-                f"• **Expedited Fee**: **${res.get('consular_fee', 650.0):.2f}** (Exceeds agency standard threshold of $500.00).\n"
-                f"• **Action Required**: Escalated to Operations Command for managerial approval."
+                f"🚨 **Managerial Fee Authorization Required**\n\n"
+                f"• **Embassy Update**: Fast-track priority appointment confirmed.\n"
+                f"• **Expedited Consular Fee**: **${res.get('consular_fee', 650.0):.2f}** (Requires executive sign-off for amounts over $500.00).\n"
+                f"• **Next Step**: Escalated to Wanderpath Senior Management for immediate approval."
             )
         elif status == "COMPLETED":
             resp_text = (
-                f"✅ **Visa Issued Successfully**\n\n"
+                f"✅ **Visa Successfully Issued & Confirmed**\n\n"
                 f"• **Visa Reference**: `{res.get('visa_number', 'VISA-APPROVED')}`\n"
                 f"• **Destination**: {res.get('destination', 'France')}\n"
-                f"• **Fee Paid**: ${res.get('consular_fee', res.get('retrieved_fee', 650.0)):.2f}\n"
-                f"• **Status**: Validated and added to client traveler profile."
+                f"• **Final Fee**: ${res.get('consular_fee', res.get('retrieved_fee', 650.0)):.2f}\n"
+                f"• **Status**: Validated and attached to your traveler profile. Have a wonderful trip!"
             )
         else:
-            resp_text = f"Visa Application processed to step: {current_node}. Status: {status}"
+            resp_text = f"Visa Application updated: {current_node} ({status})"
 
         return JSONResponse({
             "agent_id": agent_id,
@@ -319,28 +316,28 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
 
         if current_node == "awaiting_carrier_adjudication" and status == "INTERRUPTED":
             resp_text = (
-                f"⚖️ **Supplier Dispute Claim Filed via GDS**\n\n"
-                f"• **Carrier**: {res.get('carrier', 'PacificFly')} | **Booking ID**: #{res.get('booking_id', 3)}\n"
-                f"• **Tree of Thoughts Strategy**: `{res.get('selected_strategy', 'EU261_STATUTORY_CLAIM')}`\n"
-                f"• **GDS Filing Ref**: `{res.get('gds_filing_ref', 'GDS-DISP-3')}`\n"
-                f"• **Status**: ⏳ Formal case filed. **Awaiting carrier 7-day settlement window.**"
+                f"⚖️ **Airline Dispute Claim Filed**\n\n"
+                f"• **Carrier**: {res.get('carrier', 'PacificFly')} | **Booking Reference**: #{res.get('booking_id', 3)}\n"
+                f"• **Legal Basis**: `Statutory EU261 Delay & Disruption Compensation`\n"
+                f"• **Clearinghouse Case Ref**: `{res.get('gds_filing_ref', 'GDS-DISP-3')}`\n"
+                f"• **Current Status**: ⏳ Claim submitted to airline clearinghouse. **Awaiting carrier settlement response.**"
             )
         elif current_node == "evaluate_settlement_offer" and status == "INTERRUPTED":
             resp_text = (
-                f"🚨 **Fee Waiver Authorization Required (HITL Gate)**\n\n"
+                f"🚨 **Settlement Terms Review Required**\n\n"
                 f"• **Carrier Settlement Offer**: Refund of ${res.get('carrier_settlement', {}).get('amount', 200.0):.2f}\n"
-                f"• **Fee Waiver Demanded**: **${res.get('carrier_settlement', {}).get('fee_waiver', 350.0):.2f}** (Exceeds agency threshold of $300.00).\n"
-                f"• **Action Required**: Escalated to Operations Command for commercial approval."
+                f"• **Cancellation Fee Waiver**: **${res.get('carrier_settlement', {}).get('fee_waiver', 350.0):.2f}** (Requires executive authorization).\n"
+                f"• **Next Step**: Escalated to Operations Management for final commercial approval."
             )
         elif status == "COMPLETED":
             resp_text = (
-                f"✅ **Dispute Settled & Ledger Credited**\n\n"
-                f"• **Booking ID**: #{res.get('booking_id', 3)}\n"
-                f"• **Refund Credited**: **${res.get('refund_credited', 200.0):.2f}**\n"
-                f"• **Status**: Finalized and reconciled in agency ledger."
+                f"✅ **Dispute Successfully Resolved**\n\n"
+                f"• **Booking Reference**: #{res.get('booking_id', 3)}\n"
+                f"• **Total Refund Credited**: **${res.get('refund_credited', 200.0):.2f}**\n"
+                f"• **Status**: Settled and credited back to your account."
             )
         else:
-            resp_text = f"Dispute Claim processed to step: {current_node}. Strategy: {res.get('selected_strategy')}"
+            resp_text = f"Dispute Claim updated: {current_node}"
 
         return JSONResponse({
             "agent_id": agent_id,
@@ -365,27 +362,27 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
 
         if current_node == "awaiting_hospital_admission" and status == "INTERRUPTED":
             resp_text = (
-                f"🚁 **VIP Aeromedical Evacuation Charter Initialized**\n\n"
-                f"• **Patient**: {res.get('patient_name', 'Elena Rostova')} | **Location**: {res.get('current_location', 'Bali')}\n"
-                f"• **LATS Selected Route**: `{res.get('selected_route_id', 'ROUTE_SGH_DIRECT')}` (Learjet 60XR Direct Air Ambulance to Singapore General Hospital)\n"
-                f"• **Standby Guarantee**: `${res.get('estimated_cost', 14500.0):.2f}` (`WP-MED-99`)\n"
-                f"• **Status**: ⏳ Air ambulance on tarmac standby. **Awaiting ICU bed availability confirmation.**"
+                f"🚁 **Emergency Aeromedical Charter Arranged**\n\n"
+                f"• **Patient**: {res.get('patient_name', 'Elena Rostova')} | **Current Location**: {res.get('current_location', 'Bali')}\n"
+                f"• **Flight Route**: Direct Learjet 60XR Dedicated Air Ambulance to Singapore General Hospital\n"
+                f"• **Charter Guarantee**: `${res.get('estimated_cost', 14500.0):.2f}`\n"
+                f"• **Current Status**: ⏳ Medical aircraft on tarmac standby. **Awaiting ICU receiving bed confirmation from hospital.**"
             )
         elif current_node == "evaluate_physician_authorization" and status == "INTERRUPTED":
             resp_text = (
-                f"🚨 **Physician Medical Director Authorization Required (HITL Gate)**\n\n"
-                f"• **Hospital Bed**: ICU Level 1 Confirmed (`ICU-BED-04` at SGH)\n"
-                f"• **Charter Cost**: **${res.get('estimated_cost', 14500.0):.2f}** (Exceeds emergency threshold of $5,000.00).\n"
-                f"• **Action Required**: Chief Medical Officer sign-off required for wheels-up launch."
+                f"🚨 **Medical Director Sign-Off Required**\n\n"
+                f"• **Hospital Ward**: ICU Level 1 Confirmed at Singapore General Hospital\n"
+                f"• **Charter Cost**: **${res.get('estimated_cost', 14500.0):.2f}**\n"
+                f"• **Next Step**: Chief Medical Officer flight clearance required prior to wheels-up launch."
             )
         elif status == "COMPLETED":
             resp_text = (
-                f"🛫 **Patient Airborne & En Route to ICU**\n\n"
-                f"• **Mission ID**: `{res.get('mission_id', 'MEDEVAC-MISSION-COMPLETE')}`\n"
-                f"• **Status**: Learjet 60XR airborne; Singapore trauma team standing by on tarmac."
+                f"🛫 **Patient Airborne & Medical Team Standing By**\n\n"
+                f"• **Mission Reference**: `{res.get('mission_id', 'MEDEVAC-MISSION-COMPLETE')}`\n"
+                f"• **Status**: Learjet 60XR airborne; Singapore specialized trauma team standing by on tarmac."
             )
         else:
-            resp_text = f"Medevac Mission processed to step: {current_node}. Selected Route: {res.get('selected_route_id')}"
+            resp_text = f"Medevac Mission updated: {current_node}"
 
         return JSONResponse({
             "agent_id": agent_id,
@@ -406,19 +403,19 @@ async def handle_agent_chat(request: Request) -> JSONResponse:
             "thread_id": thread_id,
             "status": "COMPLETED",
             "routed_algorithm": routed_algo,
-            "response": f"🗺️ **Dynamic Trip Disruption Plan ({routed_algo})**:\n\n{plan_res}",
+            "response": f"🗺️ **Custom Journey Rebooking Plan**:\n\n{plan_res}",
             "state": {"plan_output": plan_res, "algorithm": routed_algo},
         })
 
     # Route to Memory & RAG Agent
     elif agent_id == "memory_rag_agent":
         retrieved = vector_db.similarity_search(user_msg, n_results=1)
-        rag_context = retrieved[0]["document"] if retrieved else "No direct policy match found in knowledge base."
+        rag_context = retrieved[0]["document"] if retrieved else "No matching policy terms found."
         return JSONResponse({
             "agent_id": agent_id,
             "thread_id": thread_id,
             "status": "COMPLETED",
-            "response": f"📖 **Verified Policy Knowledge Retrieval**:\n\n> {rag_context}",
+            "response": f"📖 **Official Policy Information**:\n\n> {rag_context}",
             "state": {"retrieved_context": rag_context},
         })
 
