@@ -49,7 +49,8 @@ ENV PYTHONPATH=/app
 COPY . .
 
 # Ensure entrypoint is executable and storage directories exist
-RUN chmod +x docker-entrypoint.sh && \
+RUN sed -i 's/\r$//' docker-entrypoint.sh && \
+    chmod +x docker-entrypoint.sh && \
     mkdir -p /app/db /app/rag/chroma_db /app/docs/transcripts
 
 # Expose Platform Web UI (8500) and MCP SSE Server (8000)

@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import json
+import os
 import pathlib
 from typing import Any, Callable, Dict, List, Optional
 import mcp.types as types
@@ -521,9 +522,11 @@ def run_sse(host: str = "0.0.0.0", port: int = 8000):
     uvicorn.run(asgi_app, host=host, port=port, log_level="info")
 
 if __name__ == "__main__":
+    default_transport = os.getenv("MCP_TRANSPORT", "sse" if os.getenv("PORT_MCP") or os.getenv("WANDERPATH_ENV") else "stdio")
+    default_port = int(os.getenv("PORT_MCP", 8000))
     parser = argparse.ArgumentParser(description="Wanderpath Travel Agent MCP Server")
-    parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio", help="Transport mechanism (default: stdio)")
-    parser.add_argument("--port", type=int, default=8000, help="Port for SSE transport")
+    parser.add_argument("--transport", choices=["stdio", "sse"], default=default_transport, help="Transport mechanism (default: sse in production/docker, stdio in CLI)")
+    parser.add_argument("--port", type=int, default=default_port, help="Port for SSE transport")
     args = parser.parse_args()
 
     if args.transport == "stdio":

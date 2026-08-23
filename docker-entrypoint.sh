@@ -17,8 +17,8 @@ if [ "$MODE" = "test" ]; then
 fi
 
 if [ "$MODE" = "mcp" ]; then
-    echo "🚀 Starting Wanderpath MCP Server on http://0.0.0.0:${PORT_MCP:-8000}..."
-    exec python mcp_server/server.py
+    echo "🚀 Starting Wanderpath MCP Server on http://0.0.0.0:${PORT_MCP:-8000}/sse..."
+    exec python mcp_server/server.py --transport sse --port "${PORT_MCP:-8000}"
 fi
 
 if [ "$MODE" = "platform" ]; then
@@ -30,8 +30,8 @@ if [ "$MODE" = "all" ]; then
     echo "🚀 Starting Wanderpath Dual-Service Architecture..."
     
     # 1. Start MCP Server in background
-    echo "  -> Launching MCP Server on port ${PORT_MCP:-8000}..."
-    python mcp_server/server.py &
+    echo "  -> Launching MCP Server on http://0.0.0.0:${PORT_MCP:-8000}/sse..."
+    python mcp_server/server.py --transport sse --port "${PORT_MCP:-8000}" &
     MCP_PID=$!
     
     # Wait for MCP to initialize
@@ -41,7 +41,7 @@ if [ "$MODE" = "all" ]; then
     trap "echo 'Stopping container...'; kill -TERM $MCP_PID 2>/dev/null; exit 0" SIGINT SIGTERM
     
     # 3. Start Platform Web Server in foreground
-    echo "  -> Launching Full-Stack Platform on port ${PORT_PLATFORM:-8500}..."
+    echo "  -> Launching Full-Stack Platform on http://0.0.0.0:${PORT_PLATFORM:-8500}..."
     uvicorn wanderpath_platform.backend.app:app --host 0.0.0.0 --port "${PORT_PLATFORM:-8500}" &
     PLATFORM_PID=$!
     
