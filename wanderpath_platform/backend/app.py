@@ -58,11 +58,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("WanderpathPlatformAPI")
 
 # Persistent Shared Subsystems
-DB_PATH = str(project_root / "db" / "wanderpath.sqlite3")
+DB_PATH = os.getenv("DB_PATH", str(project_root / "db" / "wanderpath.sqlite3"))
+os.makedirs(os.path.dirname(os.path.abspath(DB_PATH)), exist_ok=True)
+
+CHROMA_DIR = os.getenv("CHROMA_PERSIST_DIR", str(project_root / "rag" / "chroma_db"))
+os.makedirs(os.path.abspath(CHROMA_DIR), exist_ok=True)
+
 checkpointer = DurableCheckpointer(db_path=DB_PATH)
 hitl_engine = HITLEngine(db_path=DB_PATH)
 ticket_engine = TicketEngine(db_path=DB_PATH)
-vector_db = WanderpathVectorStore(collection_name="wanderpath_knowledge", persist_dir=str(project_root / "rag" / "chroma_db"))
+vector_db = WanderpathVectorStore(collection_name="wanderpath_knowledge", persist_dir=CHROMA_DIR)
 
 # Seed baseline policies if empty
 if len(vector_db.list_documents()) == 0:
